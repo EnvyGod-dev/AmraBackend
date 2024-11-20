@@ -4,17 +4,15 @@ import { AnswerService } from '../services/answerServices';
 const answerService = new AnswerService();
 
 export class AnswerController {
-    // Get all answers
     public async getAllAnswers(req: Request, res: Response): Promise<void> {
         try {
             const answers = await answerService.getAllAnswers();
             res.status(200).json(answers);
         } catch (error) {
-            res.status(500).json({ error: error.message });
+            this.handleError(res, error);
         }
     }
 
-    // Get answer by ID
     public async getAnswerById(req: Request, res: Response): Promise<void> {
         try {
             const answer = await answerService.getAnswerById(req.params.id);
@@ -24,21 +22,19 @@ export class AnswerController {
                 res.status(404).json({ message: 'Answer not found' });
             }
         } catch (error) {
-            res.status(500).json({ error: error.message });
+            this.handleError(res, error);
         }
     }
 
-    // Create new answer
     public async createAnswer(req: Request, res: Response): Promise<void> {
         try {
             const answer = await answerService.createAnswer(req.body);
             res.status(201).json(answer);
         } catch (error) {
-            res.status(500).json({ error: error.message });
+            this.handleError(res, error);
         }
     }
 
-    // Update answer
     public async updateAnswer(req: Request, res: Response): Promise<void> {
         try {
             const answer = await answerService.updateAnswer(req.params.id, req.body);
@@ -48,11 +44,10 @@ export class AnswerController {
                 res.status(404).json({ message: 'Answer not found' });
             }
         } catch (error) {
-            res.status(500).json({ error: error.message });
+            this.handleError(res, error);
         }
     }
 
-    // Delete answer
     public async deleteAnswer(req: Request, res: Response): Promise<void> {
         try {
             const answer = await answerService.deleteAnswer(req.params.id);
@@ -62,7 +57,16 @@ export class AnswerController {
                 res.status(404).json({ message: 'Answer not found' });
             }
         } catch (error) {
+            this.handleError(res, error);
+        }
+    }
+
+    // Handle errors
+    private handleError(res: Response, error: unknown): void {
+        if (error instanceof Error) {
             res.status(500).json({ error: error.message });
+        } else {
+            res.status(500).json({ error: 'An unknown error occurred.' });
         }
     }
 }

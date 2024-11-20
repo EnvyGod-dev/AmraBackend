@@ -4,17 +4,15 @@ import { LevelService } from '../services/levelServices';
 const levelService = new LevelService();
 
 export class LevelController {
-    // Get all levels
     public async getAllLevels(req: Request, res: Response): Promise<void> {
         try {
             const levels = await levelService.getAllLevels();
             res.status(200).json(levels);
         } catch (error) {
-            res.status(500).json({ error: error.message });
+            this.handleError(res, error);
         }
     }
 
-    // Get level by ID
     public async getLevelById(req: Request, res: Response): Promise<void> {
         try {
             const level = await levelService.getLevelById(req.params.id);
@@ -24,21 +22,19 @@ export class LevelController {
                 res.status(404).json({ message: 'Level not found' });
             }
         } catch (error) {
-            res.status(500).json({ error: error.message });
+            this.handleError(res, error);
         }
     }
 
-    // Create new level
     public async createLevel(req: Request, res: Response): Promise<void> {
         try {
             const level = await levelService.createLevel(req.body);
             res.status(201).json(level);
         } catch (error) {
-            res.status(500).json({ error: error.message });
+            this.handleError(res, error);
         }
     }
 
-    // Update level
     public async updateLevel(req: Request, res: Response): Promise<void> {
         try {
             const level = await levelService.updateLevel(req.params.id, req.body);
@@ -48,11 +44,10 @@ export class LevelController {
                 res.status(404).json({ message: 'Level not found' });
             }
         } catch (error) {
-            res.status(500).json({ error: error.message });
+            this.handleError(res, error);
         }
     }
 
-    // Delete level
     public async deleteLevel(req: Request, res: Response): Promise<void> {
         try {
             const level = await levelService.deleteLevel(req.params.id);
@@ -62,7 +57,16 @@ export class LevelController {
                 res.status(404).json({ message: 'Level not found' });
             }
         } catch (error) {
+            this.handleError(res, error);
+        }
+    }
+
+    // Handle errors
+    private handleError(res: Response, error: unknown): void {
+        if (error instanceof Error) {
             res.status(500).json({ error: error.message });
+        } else {
+            res.status(500).json({ error: 'An unknown error occurred.' });
         }
     }
 }
