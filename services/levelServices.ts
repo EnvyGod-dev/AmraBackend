@@ -2,8 +2,12 @@ import { Level, ILevel } from '../models/level';
 
 export class LevelService {
     // Get all levels
-    public async getAllLevels(): Promise<ILevel[]> {
-        return await Level.find();
+    public async getAllLevels(): Promise<Partial<ILevel>[]> {
+        const levels = await Level.find();
+        return levels.map(level => {
+            const { _id, name, description } = level.toObject();
+            return { id: _id, name, description }; // Return without __v
+        });
     }
 
     // Get level by ID
